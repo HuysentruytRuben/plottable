@@ -6,10 +6,12 @@ export module _Drawer {
     public static LINE_CLASS = "line";
 
     private _pathSelection: D3.Selection;
+    private _interpolation: any;
 
     protected _enterData(data: any[]) {
       super._enterData(data);
       this._pathSelection.datum(data);
+      this._interpolation = "linear";
     }
 
     public setup(area: D3.Selection) {
@@ -30,7 +32,8 @@ export module _Drawer {
       return d3.svg.line()
                    .x(xFunction)
                    .y(yFunction)
-                   .defined(definedFunction);
+                   .defined(definedFunction)
+                   .interpolate(this._interpolation);
     }
 
     protected _numberOfAnimationIterations(data: any[]): number {
@@ -74,6 +77,11 @@ export module _Drawer {
 
     public _getSelection(index: number): D3.Selection {
       return this._getRenderArea().select(this._getSelector());
+    }
+
+    public _interpolate(interpolation: any){
+      if(interpolation)
+      return this;
     }
   }
 }

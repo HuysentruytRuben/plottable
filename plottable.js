@@ -2962,6 +2962,7 @@ var Plottable;
             Line.prototype._enterData = function (data) {
                 _super.prototype._enterData.call(this, data);
                 this._pathSelection.datum(data);
+                this._interpolation = "linear";
             };
             Line.prototype.setup = function (area) {
                 this._pathSelection = area.append("path").classed(Line.LINE_CLASS, true).style({
@@ -2974,7 +2975,7 @@ var Plottable;
                 if (!definedFunction) {
                     definedFunction = function (d, i) { return true; };
                 }
-                return d3.svg.line().x(xFunction).y(yFunction).defined(definedFunction);
+                return d3.svg.line().x(xFunction).y(yFunction).defined(definedFunction).interpolate(this._interpolation);
             };
             Line.prototype._numberOfAnimationIterations = function (data) {
                 return 1;
@@ -3009,6 +3010,10 @@ var Plottable;
             };
             Line.prototype._getSelection = function (index) {
                 return this._getRenderArea().select(this._getSelector());
+            };
+            Line.prototype._interpolate = function (interpolation) {
+                if (interpolation)
+                    return this;
             };
             Line.LINE_CLASS = "line";
             return Line;
@@ -7884,6 +7889,7 @@ var Plottable;
                 this.animator("reset", new Plottable.Animator.Null());
                 this.animator("main", new Plottable.Animator.Base().duration(600).easing("exp-in-out"));
                 this._defaultStrokeColor = new Plottable.Scale.Color().range()[0];
+                this._interpolation = "linear";
             }
             Line.prototype._setup = function () {
                 _super.prototype._setup.call(this);
@@ -7894,7 +7900,7 @@ var Plottable;
                 return value != null && value === value;
             };
             Line.prototype._getDrawer = function (key) {
-                return new Plottable._Drawer.Line(key);
+                return new Plottable._Drawer.Line(key)._interpolate(this._interpolation);
             };
             Line.prototype._getResetYFunction = function () {
                 // gets the y-value generator for the animation start point
@@ -8042,6 +8048,35 @@ var Plottable;
                     pixelPositions: [closestPoint],
                     selection: this._hoverTarget
                 };
+            };
+            //===== /Hover logic =====
+            /**
+             * Allows access to D3 interpolation options (as strings)
+             *    linear
+             *    linear-closed
+             *    step-before
+             *    step-after
+             *    basis
+             *    basis-open
+             *    basis-closed
+             *    bundle
+             *    cardinal
+             *    cardinal-open
+             *    cardinal-closed
+             *    monotone
+             *
+             * interpolation may also be a custom function
+             * for more information check the D3 documentation on this here: https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate
+             */
+            Line.prototype.interpolate = function (interpolation) {
+                if (interpolation) {
+                    this._interpolation = interpolation;
+                    this._render();
+                    return this;
+                }
+                else {
+                    return this._interpolation;
+                }
             };
             return Line;
         })(Plot.AbstractXYPlot);

@@ -6,6 +6,7 @@ export module Plot {
     private _hoverDetectionRadius = 15;
     private _hoverTarget: D3.Selection;
     private _defaultStrokeColor: string;
+    private _interpolation: string;
 
     protected _yScale: Scale.AbstractQuantitative<number>;
 
@@ -25,6 +26,7 @@ export module Plot {
                                          .easing("exp-in-out"));
 
       this._defaultStrokeColor = new Scale.Color().range()[0];
+      this._interpolation = "linear";
     }
 
     protected _setup() {
@@ -41,7 +43,7 @@ export module Plot {
     }
 
     protected _getDrawer(key: string) {
-      return new Plottable._Drawer.Line(key);
+      return new Plottable._Drawer.Line(key)._interpolate(this._interpolation);
     }
 
     protected _getResetYFunction() {
@@ -215,6 +217,34 @@ export module Plot {
       };
     }
     //===== /Hover logic =====
+
+    /**
+     * Allows access to D3 interpolation options (as strings)
+     *    linear
+     *    linear-closed
+     *    step-before
+     *    step-after
+     *    basis
+     *    basis-open
+     *    basis-closed
+     *    bundle
+     *    cardinal
+     *    cardinal-open
+     *    cardinal-closed
+     *    monotone
+     *
+     * interpolation may also be a custom function
+     * for more information check the D3 documentation on this here: https://github.com/mbostock/d3/wiki/SVG-Shapes#line_interpolate
+     */
+    public interpolate(interpolation: any){
+      if(interpolation){
+        this._interpolation = interpolation;
+        this._render();
+        return this;
+      } else {
+        return this._interpolation;
+      }
+    }
   }
 }
 }
