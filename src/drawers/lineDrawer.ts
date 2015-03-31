@@ -80,8 +80,12 @@ export module _Drawer {
     }
 
     public _interpolate(interpolation: any){
-      if(interpolation)
-      return this;
+      if(interpolation){
+        this._interpolation = interpolation;
+        return this;
+      } else {
+        return this._interpolation;
+      }
     }
   }
 }

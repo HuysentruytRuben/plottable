@@ -3012,8 +3012,13 @@ var Plottable;
                 return this._getRenderArea().select(this._getSelector());
             };
             Line.prototype._interpolate = function (interpolation) {
-                if (interpolation)
+                if (interpolation) {
+                    this._interpolation = interpolation;
                     return this;
+                }
+                else {
+                    return this._interpolation;
+                }
             };
             Line.LINE_CLASS = "line";
             return Line;
